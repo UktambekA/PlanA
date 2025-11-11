@@ -786,9 +786,6 @@
 
 
 
-
-
-
 import io
 import base64
 import datetime as dt
@@ -887,11 +884,11 @@ with tab1:
     df_download_button(filtered, "Download Plan (CSV)", "plan_12_months.csv")
 
     st.markdown("### Milestone Suggestions")
-    st.markdown(\"\"\"
+    st.markdown("""
     - **Monthly**: 1 shipped project + 1 technical write-up
     - **Quarterly**: Public demo (Streamlit/Space) + code review by peers
     - **Metrics**: Model quality vs. baselines, latency targets, uptime, test coverage
-    \"\"\")
+    """)
 
 # --------------------------
 # Tab 2: Portfolio Roadmap
@@ -912,7 +909,7 @@ with tab2:
     df_download_button(filtered_pf, "Download Portfolio (CSV)", "portfolio_roadmap.csv")
 
     st.markdown("### Repo Structure Template")
-    st.code(\"\"\"
+    st.code("""
     repo/
       ├─ src/
       │   ├─ data/
@@ -926,7 +923,7 @@ with tab2:
       ├─ Makefile
       ├─ requirements.txt
       └─ README.md
-    \"\"\", language="text")
+    """, language="text")
 
 # --------------------------
 # Tab 3: Resources
@@ -941,18 +938,18 @@ with tab3:
     df_download_button(rdf, "Download Resources (CSV)", "resources_list.csv")
 
     st.markdown("### Study Cadence")
-    st.markdown(\"\"\"
+    st.markdown("""
     - Daily: 1h theory · 2h coding · 1h reading
     - Weekly: 1 project increment, 1 code review, 1 blog post draft
     - Monthly: Public demo + retrospective
-    \"\"\")
+    """)
 
 # --------------------------
 # Tab 4: Checklists
 # --------------------------
 with tab4:
     st.subheader("Execution Checklists")
-    st.markdown(\"\"\"
+    st.markdown("""
     **Every Project**
     - [ ] Clear problem statement & baseline
     - [ ] Reproducible data pipeline
@@ -960,14 +957,14 @@ with tab4:
     - [ ] Unit tests + CI
     - [ ] Dockerized service / Streamlit demo
     - [ ] README with results & lessons
-    \"\"\")
-    st.markdown(\"\"\"
+    """)
+    st.markdown("""
     **MLOps Readiness**
     - [ ] FastAPI endpoint with input validation
     - [ ] Logging & monitoring (latency, errors)
     - [ ] Model registry & versioning
     - [ ] Rollback plan
-    \"\"\")
+    """)
 
 # --------------------------
 # Tab 5: Weekly Tasks (Tracker)
@@ -1047,11 +1044,13 @@ with tab6:
     if not prog_df.empty and "StudyHours" in prog_df.columns:
         fig1 = plt.figure()
         plt.plot(prog_df["WeekStart"], prog_df["StudyHours"], marker="o", label="StudyHours")
-        plt.axhline(y=target_hours)
+        plt.axhline(y=target_hours, linestyle='--', color='red', label='Target')
         plt.title("Weekly Study Hours vs Target")
         plt.xlabel("Week Start")
         plt.ylabel("Hours")
+        plt.legend()
         plt.xticks(rotation=45)
+        plt.tight_layout()
         st.pyplot(fig1)
 
     if not prog_df.empty and "ProjectsShipped" in prog_df.columns:
@@ -1063,6 +1062,7 @@ with tab6:
         plt.xlabel("Week Start")
         plt.ylabel("Cumulative Projects")
         plt.xticks(rotation=45)
+        plt.tight_layout()
         st.pyplot(fig2)
 
     csv_prog = prog_df.to_csv(index=False).encode("utf-8")
@@ -1132,11 +1132,13 @@ with tab7:
         fig3 = plt.figure()
         plt.plot(days[:len(remaining)], remaining, marker="o", label="Remaining")
         if ideal:
-            plt.plot(days[:len(ideal)], ideal, marker="")
+            plt.plot(days[:len(ideal)], ideal, linestyle='--', label="Ideal")
         plt.title("Burndown: Remaining Hours (Actual vs Ideal)")
         plt.xlabel("Date")
         plt.ylabel("Remaining Hours")
+        plt.legend()
         plt.xticks(rotation=45)
+        plt.tight_layout()
         st.pyplot(fig3)
 
     # Download log
@@ -1174,9 +1176,10 @@ with tab8:
         current = float(row.get("Current", 0) or 0)
 
         fig4 = plt.figure()
-        plt.bar(["Current", "Target"], [current, target])
+        plt.bar(["Current", "Target"], [current, target], color=['#1f77b4', '#ff7f0e'])
         plt.title(f"KR Progress: {row.get('KR', '')}")
         plt.ylabel("Value")
+        plt.tight_layout()
         st.pyplot(fig4)
 
     csv_okr = okr_df.to_csv(index=False).encode("utf-8")
@@ -1235,11 +1238,14 @@ with tab8:
     # Plot habit adherence
     if len(pct_goal) > 0:
         fig5 = plt.figure()
-        plt.plot(habits_df["Date"], pct_goal, marker="o")
+        plt.plot(habits_df["Date"], pct_goal, marker="o", color='green')
+        plt.axhline(y=100, linestyle='--', color='red', label='100% Goal')
         plt.title("Daily Habit Adherence (% of Goal)")
         plt.xlabel("Date")
         plt.ylabel("% Goal")
+        plt.legend()
         plt.xticks(rotation=45)
+        plt.tight_layout()
         st.pyplot(fig5)
 
     csv_h = habits_df.to_csv(index=False).encode("utf-8")
